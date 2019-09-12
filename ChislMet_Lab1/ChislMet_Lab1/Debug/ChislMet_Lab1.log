@@ -1,3 +1,4 @@
-﻿  ChislMet_Lab1.cpp
-c:\chislmet_lab1\chislmet_lab1\chislmet_lab1.cpp(125): warning C4101: alpha: неиспользованная локальная переменная
-  ChislMet_Lab1.vcxproj -> C:\ChislMet_Lab1\Debug\ChislMet_Lab1.exe
+﻿  pch.cpp
+  ChislMet_Lab1.cpp
+c:\gitbase\nummethods\chislmet_lab1\chislmet_lab1\chislmet_lab1.cpp(125): warning C4101: alpha: неиспользованная локальная переменная
+  ChislMet_Lab1.vcxproj -> C:\GitBase\NumMethods\ChislMet_Lab1\Debug\ChislMet_Lab1.exe
