@@ -68,7 +68,7 @@ public:
 		cout << "We work with F2: \n";
 		double x0, alpha, eps;
 		eps = 0.00001;
-		alpha = -0.05;
+		alpha = -0.1;
 		cout << "  x0 = "; cin >> x0;
 		cout << "  alpha = " << alpha <<"\n"; //cin >> alpha;
 		cout << "  eps = " << eps <<endl;
@@ -82,11 +82,12 @@ public:
 
 private:
 	double F(double x) {
-		return x*x - 4;
+		return x*x;
 							// x^2 - 4 eps = 0.00001 alpha = -0.05
 							// (x*x*x) - x - 2 -||- res 1.5213928	
 							// (x*x*x) - 8 
 							// sin(x)  --> (res*180)/pi = res in gradus
+							// x^2 alpha = -0.5
 	}
 
 	double Alg(double x0, double alpha, double eps) {
@@ -123,7 +124,7 @@ public:
 	void Main() {
 		cout << "We work with F3: \n";
 		double x0, alpha, eps;
-		eps = 0.00001;
+		eps = 0.000000001;
 		//alpha = -0.5;
 		cout << "  x0 = "; cin >> x0;
 		//cout << "  alpha = " << alpha << "\n"; //cin >> alpha;
@@ -139,7 +140,7 @@ public:
 private:
 	double F(double x) {
 		return (x*x) - 4;
-						// x^2 - 4 eps = 0.00001 alpha = -0.05
+						// x^2 - 4 eps = 0.00001 
 						// (x*x*x) - x - 2 -||- res 1.5213928	
 						// (x*x*x) - 8 
 						// sin(x)  --> (res*180)/pi = res in gradus
@@ -160,6 +161,7 @@ private:
 		cout << "    abs( " << x1 << " - " << x0 << ") = " << abs(x1 - x0) << endl;
 		cout << "    x0 = " << x0 << endl;
 		cout << "    x1 = " << x1 << endl;
+		cout << "    F(x)= " << F(x0) << endl;
 
 		while (fabs(x1 - x0) >= eps)
 		{
@@ -171,6 +173,7 @@ private:
 			cout << "    abs( " << x1 << " - " << x0 << ") = " << abs(x1 - x0) << endl;
 			cout << "    x0 = " << x0 << endl;
 			cout << "    x1 = " << x1 << endl;
+			cout << "    F(x)= " << F(x0) << endl;
 		}
 
 		return x1;
