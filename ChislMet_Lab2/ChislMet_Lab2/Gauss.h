@@ -12,9 +12,15 @@ private:
 	double ** generMatrRand(int n);
 	double * generYRand(int n);
 
-	void showX(double *x, int n);
+	double ** generMatrGilbert(int n);
+	double ** generMatrDiag(int n);
 
-	void sysOut(double **a, double *y, int n);
+	void showX(double *x, int n);
+	void showMatr();
+
+	void checkRes();
+
+	void sysOut();
 	double * gauss(double **a, double *y, int n);
 
 public:

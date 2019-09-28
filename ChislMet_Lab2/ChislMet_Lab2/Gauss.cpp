@@ -3,12 +3,14 @@
 
 #include <iostream>
 #include <stdlib.h> 
+#include <cmath>
+#include <time.h>
+#include <iomanip>
 
 using namespace std;
 
 Gauss::Gauss()
 {
-	cout << "You choose Gauss method \n\n";
 }
 
 
@@ -18,7 +20,7 @@ Gauss::~Gauss()
 
 bool Gauss::Continue() {
 	char tmp;
-	cout << "Would you like to continue(y/n): ";
+	cout << "Would you like to continue Gauss method (y/n): ";
 	cin >> tmp;
 
 	if (tmp == 'y') return true;
@@ -27,11 +29,12 @@ bool Gauss::Continue() {
 
 void Gauss::run()
 {
+	srand(time(0));
 	int number;
 	bool cont = true;
 
 	while (cont) {
-		cout << "1. Random\n2. From keyboard\n\n";
+		cout << "1. Random\n2. From keyboard\n3. Matr Gilbert\n4. Matr Diag\n\n";
 
 		cout << "Enter the number : ";
 		cin >> number;
@@ -53,14 +56,26 @@ void Gauss::run()
 			y = generY(n);
 			break;
 
+		case 3:
+			a = generMatrGilbert(n);
+			y = generYRand(n);
+			break;
+
+		case 4:
+			a = generMatrDiag(n);
+			y = generYRand(n);
+			break;
+
 		default:
 			break;
 		}
 
-		sysOut(a, y, n);
+		sysOut();
+		showMatr();
 		x = gauss(a, y, n);
 		showX(x, n);
-
+		checkRes();
+	
 		cont = Continue();
 	}
 
@@ -110,7 +125,7 @@ double ** Gauss::generMatrRand(int n)
 		{
 			int tmp = rand() % 50 + 1;
 			a[i][j] = tmp;
-			cout << "a[" << i << "][" << j << "]= " << a[i][j] <<endl;
+			if (n <= 10) cout << "a[" << i << "][" << j << "]= " << a[i][j] <<endl;
 		}
 	}
 
@@ -132,92 +147,209 @@ double * Gauss::generYRand(int n)
 	return y;
 }
 
+double ** Gauss::generMatrGilbert(int n)
+{
+	double **a;
+	a = new double*[n];
+	
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = new double[n];
+		for (int j = 0; j < n; j++)
+		{
+			double tmp = 1./(i + j + 1);
+			a[i][j] = tmp;
+			if (n <= 10) cout << "a[" << i << "][" << j << "]= " << a[i][j] << endl;
+		}
+	}
+
+	return a;
+}
+
+double ** Gauss::generMatrDiag(int n)
+{
+	double **a;
+	a = new double*[n];
+
+	int f = 0;
+	int tmp = 0;
+	int s = 0;
+
+	int i, j;
+
+	for (i = 0; i < n; i++)
+	{
+		a[i] = new double[n];
+		for (j = 0; j < n; j++)
+		{
+			tmp = rand() % 50 + 1;
+			a[i][j] = tmp;
+			if (i == j) f = abs(tmp);
+			else s += abs(tmp);
+			
+			if (n <= 10) cout << "a[" << i << "][" << j << "]= " << a[i][j] << endl;
+		}
+
+		if (f > s) {
+			continue;
+		}else{
+			a[i][i] += f + s;
+			f = 0;
+			s = 0;
+		}
+	}
+
+	if (n <= 10){
+		cout << "--------------------------------------" << endl;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				 cout << "a[" << i << "][" << j << "]= " << a[i][j] << endl;
+			}
+		}
+	}
+	return a;
+}
+
 void Gauss::showX(double *x, int n)
 {
 	cout << endl;
 	for (int i = 0; i < n; i++)
-		cout << "x[" << i << "]=" << x[i] << endl;
+		cout << "x[" << i << "]= " << x[i] << endl;
 	cout << endl;
 }
 
-// Вывод системы уравнений
-void Gauss::sysOut(double **a, double *y, int n)
+void Gauss::showMatr()
 {
+	if (n <= 10) {
+		cout << endl;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				cout << setw(3) << a[i][j] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+}
+
+void Gauss::checkRes()
+{
+	cout << endl;
+	cout << "checkRes: Our = Real\n";
+	double res = 0;
 	cout << endl;
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; j++)
 		{
-			cout << a[i][j] << "*x" << j;
-			if (j < n - 1)
-				cout << " + ";
+			//if (n <= 5) { cout << a[i][j] << " * " << x[j]; if (j < n - 1) cout << " + "; }
+			res += a[i][j] * x[j];
 		}
-		cout << " = " << y[i] << endl;
+		cout << res << " = " << y[i] << endl;
+		res = 0;
 	}
 	cout << endl;
+}
+
+void Gauss::sysOut()
+{
+	if (n <= 5) {
+		cout << endl;
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				cout << a[i][j] << "*x" << j;
+				if (j < n - 1)
+					cout << setw(2) << " + " << setw(2);
+			}
+			cout << setw(2) << " = " << y[i] << setw(2) << endl;
+		}
+		cout << endl;
+	}
 	return;
 }
 
 double * Gauss::gauss(double **a, double *y, int n)
-{
+{	
+	
 	double *x, max;
 	int k, index;
-	const double eps = 0.00001;  // точность
+	const double eps = 0.0000001; 
 	x = new double[n];
+
+	double **aa;
+
+	aa  = new double*[n];
+	for (int i = 0; i < n; i++)
+	{
+		aa[i] = new double[n];
+		for (int j = 0; j < n; j++)
+		{
+			aa[i][j] = a[i][j];
+		}
+	}
+
+	double *yy;
+	yy = new double[n];
+	for (int i = 0; i < n; i++)
+	{
+		yy[i] = y[i];
+	}
+
 	k = 0;
 	while (k < n)
 	{
-		// Поиск строки с максимальным a[i][k]
-		max = abs(a[k][k]);
+		max = abs(aa[k][k]);
 		index = k;
 		for (int i = k + 1; i < n; i++)
 		{
-			if (abs(a[i][k]) > max)
+			if (abs(aa[i][k]) > max)
 			{
-				max = abs(a[i][k]);
+				max = abs(aa[i][k]);
 				index = i;
 			}
 		}
-		// Перестановка строк
+		
 		if (max < eps)
 		{
-			// нет ненулевых диагональных элементов
+			
 			cout << "Solution impossible due to null column ";
 			cout << index << " matrix A" << endl;
 			return 0;
 		}
 		for (int j = 0; j < n; j++)
 		{
-			double temp = a[k][j];
-			a[k][j] = a[index][j];
-			a[index][j] = temp;
+			double temp = aa[k][j];
+			aa[k][j] = aa[index][j];
+			aa[index][j] = temp;
 		}
-		double temp = y[k];
-		y[k] = y[index];
-		y[index] = temp;
+		double temp = yy[k];
+		yy[k] = yy[index];
+		yy[index] = temp;
 
-		// Нормализация уравнений
+		
 		for (int i = k; i < n; i++)
 		{
-			double temp = a[i][k];
-			if (abs(temp) < eps) continue; // для нулевого коэффициента пропустить
+			double temp = aa[i][k];
+			if (abs(temp) < eps) continue; 
 			for (int j = 0; j < n; j++)
-				a[i][j] = a[i][j] / temp;
-			y[i] = y[i] / temp;
-			if (i == k)  continue; // уравнение не вычитать само из себя
+				aa[i][j] = aa[i][j] / temp;
+			yy[i] = yy[i] / temp;
+			if (i == k)  continue; 
 			for (int j = 0; j < n; j++)
-				a[i][j] = a[i][j] - a[k][j];
-			y[i] = y[i] - y[k];
+				aa[i][j] = aa[i][j] - aa[k][j];
+			yy[i] = yy[i] - yy[k];
 		}
 		k++;
 	}
 
-	// обратная подстановка
+	
 	for (k = n - 1; k >= 0; k--)
 	{
-		x[k] = y[k];
+		x[k] = yy[k];
 		for (int i = 0; i < k; i++)
-			y[i] = y[i] - a[i][k] * x[k];
+			yy[i] = yy[i] - aa[i][k] * x[k];
 	}
 	return x;
 }
