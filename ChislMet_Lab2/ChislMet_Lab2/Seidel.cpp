@@ -31,25 +31,75 @@ void Seidel::run()
 {
 	srand(time(0));
 	bool cont = true;
+	int number;
 
 	while (cont) {
+		cout << "1. From keyboard\n2. Matr Diag\n\n";
+
+		cout << "Enter the number : ";
+		cin >> number;
 		cout << "Enter the number of equations : ";
 		cin >> n;
+
 		a = new double*[n];
 		y = new double[n];
 
-		a = generMatrDiag(n);
-		y = generYRand(n);
+		switch (number)
+		{
+		case 1:
+			a = generMatr(n);
+			y = generY(n);
+			break;
+		case 2:
+			a = generMatrDiag(n);
+			y = generYRand(n);
+			break;
+
+		default:
+			break;
+		}
 
 		sysOut(a, y, n);
-		showMatr();
+		//showMatr();
 
 		x = seidel(a, y, n);
-		showX(x, n);
+		//showX(x, n);
 		checkRes();
 
 		cont = Continue();
 	}
+}
+
+double ** Seidel::generMatr(int n)
+{
+	double **a;
+	a = new double*[n];
+
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = new double[n];
+		for (int j = 0; j < n; j++)
+		{
+			cout << "a[" << i << "][" << j << "]= ";
+			cin >> a[i][j];
+		}
+	}
+
+	return a;
+}
+
+double * Seidel::generY(int n)
+{
+	double *y;
+	y = new double[n];
+
+	for (int i = 0; i < n; i++)
+	{
+		cout << "y[" << i << "]= ";
+		cin >> y[i];
+	}
+
+	return y;
 }
 
 double * Seidel::generYRand(int n)
@@ -184,6 +234,8 @@ double * Seidel::seidel(double ** a, double * y, int n)
 
 	for (int i = 0; i < n; i++) xn[i] = 0;
 
+	for (int i = 0; i < n; i++) cout << x[i] << " ";
+	cout << endl;
 	do {
 		norma = 0.0;
 		for (i = 0; i < n; i++)
@@ -193,10 +245,15 @@ double * Seidel::seidel(double ** a, double * y, int n)
 			for (j = 0; j < n; j++)      
 			{
 				if (i != j)
+				{
+					//cout << "xn[" << i << "] = " << xn[i] << " + ( " << a[i][j] << " * " << x[j] << " ) = " << xn[i] << " \n";
 					xn[i] += a[i][j] * x[j];
+					
+				}
 			}
 
 			xn[i] /= -a[i][i];
+			//cout << "xn[" << i << "] = " << xn[i] << endl;
 		}
 
 		for (i = 0; i < n; i++)
@@ -204,6 +261,7 @@ double * Seidel::seidel(double ** a, double * y, int n)
 			if (fabs(x[i] - xn[i]) > norma)
 				norma = fabs(x[i] - xn[i]); 
 			x[i] = xn[i];
+			//cout << "last xn[" << i << "] = " << xn[i] << endl;
 		}
 
 	} while (norma > eps);

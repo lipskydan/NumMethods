@@ -31,16 +31,34 @@ void Jacobi::run()
 {
 	srand(time(0));
 	bool cont = true;
+	int number;
 
 	while (cont) {
+		cout << "1. From keyboard\n2. Matr Diag\n\n";
+
+		cout << "Enter the number : ";
+		cin >> number;
+
 		cout << "Enter the number of equations : ";
 		cin >> n;
 		a = new double*[n];
 		y = new double[n];
 
-		a = generMatrDiag(n);
-		y = generYRand(n);
-		
+		switch (number)
+		{
+		case 1:
+			a = generMatr(n);
+			y = generY(n);
+			break;
+		case 2:
+			a = generMatrDiag(n);
+			y = generYRand(n);
+			break;
+
+		default:
+			break;
+		}
+
 		sysOut(a, y, n);
 		showMatr();
 
@@ -50,6 +68,38 @@ void Jacobi::run()
 
 		cont = Continue();
 	}
+}
+
+double ** Jacobi::generMatr(int n)
+{
+	double **a;
+	a = new double*[n];
+
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = new double[n];
+		for (int j = 0; j < n; j++)
+		{
+			cout << "a[" << i << "][" << j << "]= ";
+			cin >> a[i][j];
+		}
+	}
+
+	return a;
+}
+
+double * Jacobi::generY(int n)
+{
+	double *y;
+	y = new double[n];
+
+	for (int i = 0; i < n; i++)
+	{
+		cout << "y[" << i << "]= ";
+		cin >> y[i];
+	}
+
+	return y;
 }
 
 double * Jacobi::generYRand(int n)
@@ -178,7 +228,7 @@ double * Jacobi::jacobi(double ** a, double * y, int n)
 	x = new double[n];
 
 	int i, j, count = 0;
-	double *tmp_x, exp, e;
+	double *tmp_x, norma, e;
 
 	tmp_x = new double[n];
 	e = 0.0000001;
@@ -195,21 +245,29 @@ double * Jacobi::jacobi(double ** a, double * y, int n)
 			tmp_x[i] = 0.0;
 			for (j = 0; j < n; j++) {
 				if (i != j) {
+					//cout << "      tmp_x[" << i << "] = " << tmp_x[i] << " + ( " << a[i][j] << " * " << x[j] << " ) = " << tmp_x[i] << "\n";
 					tmp_x[i] = tmp_x[i] + (a[i][j] * x[j]);
+					
 				}
 			}
+
+			//cout << "tmp_x[" << i << "] = (" << y[i] << " - " << tmp_x[i] << " ) / " << a[i][i] << " = " << tmp_x[i] << " \n";
 			tmp_x[i] = (y[i] - tmp_x[i]) / a[i][i];
 		}
 
-		exp = 0;
+		norma = 0;
+
+		//for (i = 0; i < n; i++) cout << "tmp_x[" << i << "] = " << tmp_x[i] << "\n";
 
 		for (i = 0; i < n; i++) {
-			if (fabs(x[i] - tmp_x[i]) > exp) {
-				exp = fabs(x[i] - tmp_x[i]);
+			if (fabs(x[i] - tmp_x[i]) > norma) {
+				//cout << "exp before = " << exp;
+				norma = fabs(x[i] - tmp_x[i]);
+				//cout << "exp after = " << exp << endl;
 			}
 			x[i] = tmp_x[i];
 		}
-	} while (exp > e);
+	} while (norma > e);
 
 	return x;
 }

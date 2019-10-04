@@ -15,6 +15,9 @@ public:
 
 private:
 
+	double ** generMatr(int n);
+	double * generY(int n);
+
 	double * generYRand(int n);
 	double ** generMatrDiag(int n);
 

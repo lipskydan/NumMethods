@@ -71,9 +71,9 @@ void Gauss::run()
 		}
 
 		sysOut();
-		showMatr();
+		//showMatr();
 		x = gauss(a, y, n);
-		showX(x, n);
+		//showX(x, n);
 		checkRes();
 	
 		cont = Continue();
@@ -344,6 +344,22 @@ double * Gauss::gauss(double **a, double *y, int n)
 		k++;
 	}
 
+
+	/*cout << "mmmmmmmmmm" << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cout << setw(3) << aa[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;*/
+
+	/*cout << "yyyyyyyyyyyyyyyy" << endl;
+	for (int i = 0; i < n; i++) {
+		cout << yy[i] << " ";
+	}
+	cout << endl;*/
+
 	
 	for (k = n - 1; k >= 0; k--)
 	{
@@ -351,5 +367,5 @@ double * Gauss::gauss(double **a, double *y, int n)
 		for (int i = 0; i < k; i++)
 			yy[i] = yy[i] - aa[i][k] * x[k];
 	}
-	return x;
+/	return x;
 }
