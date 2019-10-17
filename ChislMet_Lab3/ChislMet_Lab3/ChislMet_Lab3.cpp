@@ -4,10 +4,16 @@
 #include "pch.h"
 #include <iostream>
 #include <iomanip>
+#include <cmath>
+#include <string>
 
 using namespace std;
 
-double alpha = 0.85;
+/////////////////////////////////////////-CONST-////////////////////////////////////////
+
+const double alpha = 0.85;
+const double e = 1e-9;
+
 double *tmp;
 
 //////////////////////////////////////-FIRST STEP-//////////////////////////////////////
@@ -89,6 +95,7 @@ double** InitMatrA(double **graf, int n) {
 		
 	}
 
+	delete tmp;
 
 	return a;
 }
@@ -202,11 +209,112 @@ void ShowMatrB(double **b, int n) {
 
 //////////////////////////////////////-FOURTH STEP-//////////////////////////////////////
 
+double* InitX0(int n) {
+	double *x0;
+	x0 = new double[n];
 
+	for (int i = 0; i < n; i++) x0[i] = 1.0 / n;
 
+	return x0;
+}
 
+double* B_multi_x(double* x0, double** B, int n) {
+	double *c;
+	c = new double[n];
 
+	for (int i = 0; i < n; i++) c[i] = 0;
 
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			double tmp = B[i][j] * x0[j];
+			c[i] += tmp;
+		}
+	}
+
+	return c;
+}
+
+bool CheckE(double* x0, double* x1, int n) {
+
+	double res = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		res += pow((x1[i] - x0[i]), 2);
+	}
+
+	res = pow((res), 0.5);
+
+	if (res < e) return false;
+
+	return true;
+	/*for (int i = 0; i < n; i++)
+	{
+		if (abs(x1[i] - x0[i]) < e) return false;
+	}
+
+	return true;*/
+}
+
+void Func(double* x0, double** B, int n) {
+	
+	double *x1;
+	x1 = new double[n];
+
+	bool q = false;
+
+	do {
+
+		if (q) {
+			for (int i = 0; i < n; i++) x0[i] = x1[i];
+		}
+		q = true;
+
+		x1 = B_multi_x(x0, B, n);
+
+		/*for (int i = 0; i < n; i++) cout << "\n" << x1[i] << " ";
+		cout << endl;*/
+
+	} while (CheckE(x0,x1,n) == true); 
+
+	cout << "\nVector X is :\n";
+	for (int i = 0; i < n; i++) cout << setw(21) << x1[i] << "\n";
+
+}
+
+////////////////////////////////////////-CHECK-/////////////////////////////////////////
+
+void CheckRes(double** matrB, double* x0, int n) {
+	cout << "\nMatrB * X =\n";
+	double* Bx;
+	Bx = new double[n];
+
+	for (int i = 0; i < n; i++) {
+		Bx[i] = 0;
+		for (int j = 0; j < n; j++) {
+			double tmp = matrB[i][j] * x0[j];
+			Bx[i] += tmp;
+		}
+	}
+
+	for (int i = 0; i < n; i++) cout << setw(21) << Bx[i] << endl;
+
+	delete Bx;
+}
+
+///////////////////////////////////////-CONTINUE-///////////////////////////////////////
+
+bool Cont() {
+	string str;
+	cout << "Would you like to continue(y/n)?: "; cin >> str;
+	if (str == "y" || str == "yes") {
+		cout << "\n\n";
+		return true;
+	}
+	else return false;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -219,18 +327,39 @@ int main()
 	double **matrM;
 	int n;
 
-	cout << "Input quantity: "; cin >> n;
+	bool cont = true;
 
-	graf = InitGraf(n);
-	ShowGraf(graf, n);
+	do{
+		cout << "Input quantity: "; cin >> n;
 
-	matrA = InitMatrA(graf, n);
-	ShowMatrA(matrA, n);
+		graf = InitGraf(n);
+		ShowGraf(graf, n);
 
-	matrM = InitMatrM(n);
+		matrA = InitMatrA(graf, n);
+		ShowMatrA(matrA, n);
 
-	matrB = InitMatrB(matrA, matrM, n);
-	ShowMatrB(matrB, n);
+		matrM = InitMatrM(n);
+
+		matrB = InitMatrB(matrA, matrM, n);
+		ShowMatrB(matrB, n);
+
+		double *x0;
+		x0 = InitX0(n);
+
+		Func(x0, matrB, n);
+
+		CheckRes(matrB, x0, n);
+	
+		cont = Cont();
+
+	} while (cont);
+
+	delete graf;
+	delete matrA;
+	delete matrB;
+	delete matrM;
+	
+	delete tmp;
 
 	return 0;
 }
