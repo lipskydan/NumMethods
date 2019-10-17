@@ -73,8 +73,15 @@ void Gauss::run()
 		sysOut();
 		showMatr();
 
-		cout << "Would you like to use a simple[1] Gauss methodor or modified[2] (1/2)? : ";
+		cout << "Would you like to use\n simple[1] Gauss methodor\n modified[2] Gauss method with matr\n modified[3] Gauss method with refinements)? : ";
 		int n; cin >> n;
+
+		//if (n != 1) {
+		//	M = generM(n);
+		//	U = M;
+		//	//L = 
+		//	L = generL(n);
+		//}
 
 		switch (n)
 		{
@@ -82,7 +89,10 @@ void Gauss::run()
 			run_usual();
 			break;
 		case 2:
-			run_modify();
+			run_modify_matr();
+			break;
+		case 3:
+			run_modify_2();
 			break;
 		default:
 			break;
@@ -92,10 +102,37 @@ void Gauss::run()
 	}
 }
 
-void Gauss::run_modify()
+void Gauss::run_modify_matr()
 {
-	L = generL(n);
-	U = generU(n);
+	Mup = generMup(n);
+	Mdown = generMdown(n);
+
+
+	double** U;
+	double** L;
+	U = new double*[n];
+	L = new double*[n];
+	for (int i = 0; i < n; i++) {
+		U[i] = new double[n];
+		L[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+			U[i][j] = 0;
+			L[i][j] = 0;
+		}
+	}
+
+	//showMatrUL(M);
+
+	//U = M;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			U[i][j] = Mup[i][j];
+			L[i][j] = Mdown[i][j];
+		}
+	}
+
+	//L = generL(n);
+	//U = generU(n);
 
 	cout << "Matr L:\n"; showMatrUL(L);
 	cout << "Matr U:\n"; showMatrUL(U);
@@ -107,10 +144,66 @@ void Gauss::run_modify()
 	cout << "x:\n"; showX(x1, n);
 }
 
+void Gauss::run_modify_2()
+{
+	int max = 0;
+	int ii = 0; int jj = 0;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+		{
+			if (j >= i) {
+				if (max < A[j][i]) {
+					max = A[j][i];
+					ii = j; jj = i;
+				}
+			}
+		}
+
+		cout << "max[" << i << "] = " << max << ", i = " << ii << ", j = " << jj << endl;
+		
+
+		int q = 0;
+		
+		/*if (ii < jj) iii = ii - jj + 1;
+		else iii = ii - jj - 1;
+		*/
+
+		q = ii-jj;
+		int iii = ii;
+
+		if (ii != jj) {
+			while (q > 0) {
+				//jjj--;
+
+				double tmp = A[iii][jj];
+				A[iii][jj] = A[iii - 1][jj];
+				A[iii - 1][jj] = tmp;
+
+				iii--;
+				q--;
+			}
+		}
+		
+		max = 0;
+		ii = jj = 0;
+
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+		{
+			if (i < j) A[i][j] = 0;
+		}
+	}
+
+	cout << "new A:";  showMatr();
+	run_modify_matr();
+}
+
 void Gauss::run_usual() 
 {
 	x = gauss(A, b, n);
-	showX(x, n);
+	cout << "x:\n"; showX(x, n);
 }
 
 double ** Gauss::generMatr(int n)
@@ -271,12 +364,152 @@ void Gauss::showMatrUL(double **a)
 		cout << endl;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				cout << setw(3) << a[i][j] << " ";
+				cout << setw(8) << a[i][j] << " ";
 			}
 			cout << endl;
 		}
 		cout << endl;
 	}
+}
+
+double ** Gauss::generCup(double ** M, int index, int n)
+{
+	double **c;
+	c = new double*[n];
+
+	for (int i = 0; i < n; i++) {
+		c[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+			c[i][j] = 0;
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		c[i] = new double[n];
+		for (int j = 0; j < n; j++) {	
+
+		if (i == j) {
+			c[i][j] = 1;
+		}
+		else if (j == index && i >= j ) {
+			c[i][j] = (A[i][j] / A[0][index]) * -1.;
+		}
+		else{
+			c[i][j] = 0;
+		}
+		
+		}
+	}
+
+	return c;
+}
+
+double ** Gauss::generCdown(double ** M, int index, int n)
+{
+	double **c;
+	c = new double*[n];
+
+	for (int i = 0; i < n; i++) {
+		c[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+			c[i][j] = 0;
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		c[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+
+			if (i == j) {
+				c[i][j] = 1;
+			}
+			else if (j == index && i < j) {
+				c[i][j] = (A[i][j] / A[0][index]) * -1.;
+			}
+			else {
+				c[i][j] = 0;
+			}
+
+		}
+	}
+
+	return c;
+}
+
+double ** Gauss::generMup(int n)
+{
+	double **M;
+	M = new double*[n];
+	//M = A;
+	for (int i = 0; i < n; i++) {
+		M[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+			M[i][j] = A[i][j];
+		}
+	}
+
+	//showMatr();
+
+	for (int i = 0; i < n; i++) {
+		C = generCup(M, i, n);
+		M = multiMatr(C, M, n);
+	}
+
+	/*C = generCup(M, 0, n);
+	cout << "M:\n"; showMatrUL(M);
+	M = multiMatr(C, M, n);
+
+	cout << "C:\n"; showMatrUL(C);
+	cout << "MM:\n"; showMatrUL(M);*/
+
+	return M;
+}
+
+double ** Gauss::generMdown(int n)
+{
+	double **M;
+	M = new double*[n];
+	//M = A;
+	for (int i = 0; i < n; i++) {
+		M[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+			M[i][j] = A[i][j];
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		C = generCdown(M, i, n);
+		M = multiMatr(C, M, n);
+	}
+
+	//C = generCdown(M, 2, n);
+
+	//cout << "C:\n"; showMatrUL(C);
+	//cout << "M:\n"; showMatrUL(M);
+
+	return M;
+}
+
+double ** Gauss::multiMatr(double ** C, double ** M, int n)
+{
+	double **res;
+	res = new double*[n];
+
+	for (int i = 0; i < n; i++) {
+		res[i] = new double[n];
+		for (int j = 0; j < n; j++) {
+			res[i][j] = 0;
+		}
+	}
+
+	for (int i = 0; i < n; ++i)
+		for (int j = 0; j < n; ++j)
+			for (int k = 0; k < n; ++k)
+			{
+				res[i][j] += C[i][k] * M[k][j];
+			}
+
+	return res;
 }
 
 void Gauss::checkRes()

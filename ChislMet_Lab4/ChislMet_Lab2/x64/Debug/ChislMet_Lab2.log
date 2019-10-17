@@ -1,5 +1,4 @@
-﻿  ChislMet_Lab2.cpp
-  Gauss.cpp
+﻿  Gauss.cpp
 c:\gitbase\nummethods\chislmet_lab4\chislmet_lab2\gauss.cpp(32): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  Создание кода...
+c:\gitbase\nummethods\chislmet_lab4\chislmet_lab2\gauss.cpp(156): warning C4244: =: преобразование "double" в "int", возможна потеря данных
   ChislMet_Lab2.vcxproj -> C:\GitBase\NumMethods\ChislMet_Lab4\x64\Debug\ChislMet_Lab2.exe

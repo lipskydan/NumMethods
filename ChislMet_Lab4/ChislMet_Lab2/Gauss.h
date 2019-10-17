@@ -4,7 +4,7 @@ class Gauss
 private:
 	double **A, *b, *x;
 
-	double **L, **U, *y1, *x1;
+	double **Mup, **Mdown, **C, *y1, *x1;
 
 	int n;
 
@@ -29,11 +29,18 @@ private:
 
 	double ** generL(int n);
 	double ** generU(int n);
-
 	void showMatrUL(double ** a);
 
+	double ** generCup(double **M, int index, int n);
+	double ** generCdown(double **M, int index, int n);
+	double ** generMup(int n);
+	double ** generMdown(int n);
+
+	double ** multiMatr(double **C, double **M, int n);
+
 	void run_usual();
-	void run_modify();
+	void run_modify_matr();
+	void run_modify_2();
 
 public:
 	Gauss();
