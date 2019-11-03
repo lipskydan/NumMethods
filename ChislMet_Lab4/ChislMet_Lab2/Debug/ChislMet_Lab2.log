@@ -1,3 +1,0 @@
-﻿  Seidel.cpp
-c:\gitbase\nummethods\chislmet_lab2\chislmet_lab2\seidel.cpp(32): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  ChislMet_Lab2.vcxproj -> C:\GitBase\NumMethods\ChislMet_Lab2\Debug\ChislMet_Lab2.exe
